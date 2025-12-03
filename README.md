@@ -79,7 +79,7 @@ go build -ldflags="-s -w" -o service-restarter.exe
 Run with administrator privileges:
 
 ```bash
-service-restarter.exe -service <ServiceName> [-interval <minutes>] [-hold <seconds>]
+service-restarter.exe -service <ServiceName> [-interval <minutes>] [-hold <seconds>] [-nogui]
 ```
 
 ### Command-Line Flags
@@ -89,6 +89,7 @@ service-restarter.exe -service <ServiceName> [-interval <minutes>] [-hold <secon
 | `-service` | string | Yes | - | Name of the Windows service to restart |
 | `-interval` | int | No | 60 | Restart interval in minutes |
 | `-hold` | int | No | 2 | Seconds to wait after stopping before starting |
+| `-nogui` | bool | No | false | Run without GUI countdown window |
 
 ### Examples
 
@@ -110,6 +111,11 @@ service-restarter.exe -service MSSQLSERVER -interval 120 -hold 5
 **Restart custom service every 15 minutes:**
 ```bash
 service-restarter.exe -service "MyCustomService" -interval 15 -hold 3
+```
+
+**Run without GUI countdown window:**
+```bash
+service-restarter.exe -service Spooler -interval 60 -nogui
 ```
 
 ## Finding Service Names
@@ -139,24 +145,28 @@ sc query state= all | findstr "SERVICE_NAME"
 | Remote Desktop Services | TermService |
 | SQL Server | MSSQLSERVER |
 
-## GUI Controls
+## GUI Controls (Optional)
+
+By default, the program shows a GUI countdown window. Use `-nogui` flag to disable it.
 
 - **Timer Display**: Shows countdown to next restart in MM:SS or HH:MM:SS format
 - **Restart Button**: Immediately stops and restarts the service, resetting the timer
 - **Close Button**: Stops the restart scheduler and closes the application
 - **Red Flash**: Timer text flashes red when countdown reaches zero
+- **Window**: Yellow background with black border, movable, positioned in upper-right corner
 
 ## How It Works
 
-1. The program starts and displays the GUI window
-2. It runs a background loop that triggers every configured interval
-3. When triggered:
+1. The program starts and displays a startup message
+2. Optionally displays the GUI countdown window (unless `-nogui` is used)
+3. It runs a background loop that triggers every configured interval
+4. When triggered:
    - Stops the specified service
    - Waits for the configured hold time
    - Starts the service again
-4. The GUI updates every second showing time remaining
-5. At timeout, the timer flashes red while the restart is performed
-6. The cycle repeats until you click Close
+5. If GUI is enabled, it updates every second showing time remaining
+6. At timeout, the timer flashes red while the restart is performed
+7. The cycle repeats until you stop the program
 
 ## Troubleshooting
 
