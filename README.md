@@ -201,7 +201,7 @@ The resulting `service-restarter.exe` can be copied to any Windows machine witho
 
 ## License
 
-This project is provided as-is for personal and commercial use.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Safety Notes
 
